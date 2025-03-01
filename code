@@ -1,0 +1,73 @@
+// Smoke Sensor Pin
+const int smokePin = A0;
+// Temperature Sensor Pin
+const int tempPin = A1;
+// Float Sensor Pin
+const int floatPin = A2;
+// Tilt Sensor Pin
+const int tiltPin = 4;
+// Buzzer Pin
+const int buzzerPin = 3;
+
+void setup() {
+  // Initialize serial communication
+  Serial.begin(9600);
+  // Set smoke sensor pin as input
+  pinMode(smokePin, INPUT);
+  // Set temperature sensor pin as input
+  pinMode(tempPin, INPUT);
+  // Set float sensor pin as input
+  pinMode(floatPin, INPUT);
+  // Set tilt sensor pin as input
+  pinMode(tiltPin, INPUT_PULLUP);
+  // Set buzzer pin as output
+  pinMode(buzzerPin, OUTPUT);
+}
+
+void loop() {
+  // Read smoke sensor value
+  int smokeValue = analogRead(smokePin);
+  // Read temperature sensor value
+  float tempValue = (analogRead(tempPin) * 0.48828125) - 50.0; // convert to temperature in Celsius
+  // Read float sensor value
+  int floatSensorValue = digitalRead(floatPin);
+  // Read tilt sensor value
+  int tiltSensorValue = digitalRead(tiltPin);
+  
+  // Print sensor values to serial monitor
+  Serial.print("Smoke: ");
+  Serial.print(smokeValue);
+  Serial.print(" - Temperature: ");
+  Serial.print(tempValue);
+  Serial.print("°C - Float: ");
+  Serial.print(floatSensorValue);
+  Serial.print(" - Tilt: ");
+  Serial.println(tiltSensorValue);
+  
+  // Check if smoke is detected
+  if (smokeValue > 500) {
+    // Turn on the buzzer
+    digitalWrite(buzzerPin, HIGH);
+  } else {
+    // Turn off the buzzer
+    digitalWrite(buzzerPin, LOW);
+  }
+  
+  // Check if temperature is too high
+  if (tempValue > 40) {
+    Serial.println("Temperature is too high!");
+  }
+  
+  // Check if water level is low
+  if (floatSensorValue == LOW) {
+    Serial.println("Water level is low!");
+  }
+  
+  // Check if device is tilted
+  if (tiltSensorValue == LOW) {
+    Serial.println("Device is tilted!");
+  }
+  
+  // Wait for 500 milliseconds before repeating the loop
+  delay(500);
+}
